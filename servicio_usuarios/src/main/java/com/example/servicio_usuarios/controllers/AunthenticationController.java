@@ -34,7 +34,7 @@ public class AunthenticationController {
     @PostMapping("token")
     public LoginResponse postMethodName(@RequestBody @Valid LoginRequest body) {
 
-        String token = userService.intentarLogin(body.getEmail(), body.getPassword());
+        String token = userService.intentarLogin(body.getEaaamail(), body.getPassword());
 
         return new LoginResponse(token);
     }
