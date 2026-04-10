@@ -101,7 +101,7 @@ La acción se ejecuta en los siguientes eventos:
 
 1. Crea una máquina virtual con Windows (`windows-latest`)
 2. Descarga el código del repositorio
-3. Configura Java 17 (distribución Temurin)
+3. Configura Java 21 (distribución Temurin)
 4. Compila el microservicio `api_cursos` mediante Maven
 5. Compila el microservicio `servicios_usuarios` mediante Maven
 
