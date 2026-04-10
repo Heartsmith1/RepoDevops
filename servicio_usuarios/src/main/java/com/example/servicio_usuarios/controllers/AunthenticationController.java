@@ -30,7 +30,7 @@ public class AunthenticationController {
     @Autowired
     private JwtService jwtService;
     
-    @Operation(summary = "Login de usuario", description = "Permite a un usuario autenticarse y obtener un token JWT.")
+    @Operation(summary = "Login de usuario", description = "autentica usuario y le da token jwt.")
     @PostMapping("token")
     public LoginResponse postMethodName(@RequestBody @Valid LoginRequest body) {
 
