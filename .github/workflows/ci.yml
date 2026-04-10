@@ -1,0 +1,27 @@
+name: CI Básico #NOMBRE DEL WORKFLOW
+
+on:     
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pruebas:
+    runs-on: windows-latest #CREA UNA MAQUINA VIRTUAL WINDOWS
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4   #CLONA REPOSITORIO
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4 #CONFIGURACION JAVA
+        with:
+          distribution: 'temurin'   #DISTRIBUCION DE JAVA
+          java-version: '21'        #VERSION DE JAVA
+
+      - name: Build api_cursos
+        run: cd api_cursos && mvn clean install #COPILA MICROSERVICIO
+
+      - name: Build servicios_usuarios
+        run: cd servicios_usuarios && mvn clean install #COPILA MICROSERVICIO
