@@ -16,7 +16,6 @@ import com.example.servicio_usuarios.services.UserServices;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
@@ -34,7 +33,7 @@ public class AunthenticationController {
     @PostMapping("token")
     public LoginResponse postMethodName(@RequestBody @Valid LoginRequest body) {
 
-        String token = userService.intentarLogin(body.getEmil(), body.getPassword());
+        String token = userService.intentarLogin(body.getEmail(), body.getPassword());
 
         return new LoginResponse(token);
     }

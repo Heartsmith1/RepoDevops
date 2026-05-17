@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  servicio_usuarios:
+    build: .
+    container_name: servicio_usuarios
+
+    ports:
+      - "8080:8080"
