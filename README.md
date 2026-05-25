@@ -98,16 +98,6 @@ docker-compose up --build
 
 ## Ejecutar / construir individualmente
 
-Linux / macOS:
-
-```bash
-cd api_cursos
-./mvnw clean package -DskipTests
-
-cd ../servicio_usuarios
-./mvnw clean package -DskipTests
-```
-
 Windows (PowerShell):
 
 ```powershell
@@ -125,15 +115,6 @@ docker build -t api_cursos:local -f api_cursos/dockerfile ./api_cursos
 docker run -p 8080:8080 api_cursos:local
 ```
 
-## Variables y secretos
-
-- No dejar secretos en ficheros: mover `jwt.secret` y otros valores sensibles a variables de entorno o gestores de secretos.
-- Configurar `SONAR_TOKEN` en los secretos del repositorio para análisis SonarCloud.
-
 ## Contribuir
 
 Usamos GitFlow como modelo de trabajo: ramas `feature/*`, `hotfix/*`, `develop` y `main`.
-
-## Licencia
-
-Consulta el archivo `LICENSE` en la raíz del repositorio.
