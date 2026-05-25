@@ -8,7 +8,6 @@ on:
     branches: [main]
 
 jobs:
-
   pruebas:
     runs-on: ubuntu-latest
 
@@ -42,3 +41,8 @@ jobs:
 
       - name: Levantar Docker Compose
         run: docker compose up -d --build
+
+      - name: Analisis SonarQube
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar -Dsonar.projectKey=TU_PROJECT_KEY -Dsonar.organization=TU_ORGANIZATION -Dsonar.host.url=https://sonarcloud.io/
