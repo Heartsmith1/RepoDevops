@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+
+  api_cursos:
+    build: ./api_cursos
+    ports:
+      - "8080:8080"
+
+  servicio_usuarios:
+    build: ./servicio_usuarios
+    ports:
+      - "8081:8080"

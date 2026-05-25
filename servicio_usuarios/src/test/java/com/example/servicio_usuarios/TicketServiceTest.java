@@ -9,51 +9,48 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.servicio_usuarios.models.entities.Ticket;
 import com.example.servicio_usuarios.repositories.TicketRepository;
 import com.example.servicio_usuarios.services.TicketService;
-@SpringBootTest
+
+@ExtendWith(MockitoExtension.class)
 public class TicketServiceTest {
 
-    // Inyecta una instancia real de TicketService
-    @Autowired
+    @InjectMocks
     private TicketService ticketService;
 
-    // Crea un mock del repositorio para simular su comportamiento en pruebas
-    @MockBean
+    @Mock
     private TicketRepository ticketRepository;
 
     @Test
     public void testCrearTicket() {
-        // Datos de entrada simulados
+
         Long usuarioId = 1L;
         String asunto = "Asunto prueba";
         String descripcion = "Descripción prueba";
 
-        // Crea un ticket simulado como el que se espera que retorne el repositorio
         Ticket ticketMock = new Ticket(usuarioId, asunto, descripcion, true);
-        ticketMock.setId(1L); // Simula que ya tiene un ID asignado por la base de datos
+        ticketMock.setId(1L);
 
-        // Simula el comportamiento del repositorio al guardar el ticket
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticketMock);
+        when(ticketRepository.save(any(Ticket.class)))
+                .thenReturn(ticketMock);
 
-        // Llama al método del servicio que se está probando
         Ticket resultado = ticketService.crearTicket(usuarioId, asunto, descripcion);
 
-        // Verifica que el resultado no sea nulo
         assertNotNull(resultado);
 
-        // Comprueba que los datos retornados coincidan con los simulados
-        assertEquals(1L, usuarioId, resultado.getUsuarioId()); // Verifica ID de usuario
-        assertEquals(asunto, resultado.getAsunto());           // Verifica asunto
-        assertEquals(descripcion, resultado.getDescripcion()); // Verifica descripción
-        assertTrue(resultado.isActivo());                      // Verifica que esté activo
+        assertEquals(usuarioId, resultado.getUsuarioId());
+        assertEquals(asunto, resultado.getAsunto());
+        assertEquals(descripcion, resultado.getDescripcion());
+        assertTrue(resultado.isActivo());
 
-        // Verifica que el método save del repositorio fue llamado exactamente una vez
-        verify(ticketRepository, times(1)).save(any(Ticket.class));
+        verify(ticketRepository, times(1))
+                .save(any(Ticket.class));
     }
 }
