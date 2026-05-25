@@ -109,6 +109,7 @@ Este repositorio contiene dos microservicios Java (Spring Boot) y una orquestaci
 - Docker
 - Docker Compose
 - MySQL (configurado como datasource en los `application.properties`)
+- SonarCloud
 
 ## Servicios y puertos (estado actual)
 
@@ -167,7 +168,7 @@ docker run -p 8080:8080 api_cursos:local
 
 - En `servicio_usuarios/src/main/resources/application.properties` se encuentra la propiedad `jwt.secret` con un valor de prueba. Mover secretos a variables de entorno o a un gestor de secretos antes de producción.
 
-## Calidad de código (SonarQube / SonarCloud)
+## Calidad de código (SonarCloud)
 
 El pipeline de CI ejecuta un análisis de calidad con SonarCloud para `api_cursos`. Los detalles extraídos del workflow son:
 
