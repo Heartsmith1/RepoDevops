@@ -34,10 +34,7 @@ docker-compose up --build
 
 Compilar JARs localmente:
 
-Linux / macOS:
 ```bash
-cd api_cursos
-./mvnw clean package -DskipTests
 
 cd ../servicio_usuarios
 ./mvnw clean package -DskipTests
