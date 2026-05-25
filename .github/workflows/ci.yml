@@ -22,11 +22,22 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      # =========================
+      # API CURSOS
+      # =========================
+
       - name: Compilar api_cursos
         run: cd api_cursos && mvn clean install
 
       - name: Ejecutar tests api_cursos
         run: cd api_cursos && mvn test
+
+      - name: Construir Docker api_cursos
+        run: cd api_cursos && docker build -t api_cursos .
+
+      # =========================
+      # SERVICIO USUARIOS
+      # =========================
 
       - name: Compilar servicio_usuarios
         run: cd servicio_usuarios && mvn clean install
@@ -34,16 +45,36 @@ jobs:
       - name: Ejecutar tests servicio_usuarios
         run: cd servicio_usuarios && mvn test
 
-      - name: Construir Docker api_cursos
-        run: cd api_cursos && docker build -t api_cursos .
-
       - name: Construir Docker servicio_usuarios
         run: cd servicio_usuarios && docker build -t servicio_usuarios .
+
+      # =========================
+      # DOCKER COMPOSE
+      # =========================
 
       - name: Levantar Docker Compose
         run: docker compose up -d --build
 
-      - name: Analisis SonarQube
+      # =========================
+      # SONARQUBE
+      # =========================
+
+      - name: Analisis Sonar api_cursos
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar -Dsonar.projectKey=TU_PROJECT_KEY -Dsonar.organization=TU_ORGANIZATION -Dsonar.host.url=https://sonarcloud.io/
+        run: |
+          cd api_cursos
+          mvn sonar:sonar \
+            -Dsonar.projectKey=TU_PROJECT_KEY \
+            -Dsonar.organization=TU_ORGANIZATION \
+            -Dsonar.host.url=https://sonarcloud.io
+
+      - name: Analisis Sonar servicio_usuarios
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd servicio_usuarios
+          mvn sonar:sonar \
+            -Dsonar.projectKey=TU_PROJECT_KEY2 \
+            -Dsonar.organization=TU_ORGANIZATION \
+            -Dsonar.host.url=https://sonarcloud.io
