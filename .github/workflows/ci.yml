@@ -65,8 +65,8 @@ jobs:
         run: |
           cd api_cursos
           mvn sonar:sonar \
-            -Dsonar.projectKey=TU_PROJECT_KEY \
-            -Dsonar.organization=TU_ORGANIZATION \
+            -Dsonar.projectKey=Heartsmith1_RepoDevops \
+            -Dsonar.organization=Heartsmith1 \
             -Dsonar.host.url=https://sonarcloud.io
 
       - name: Analisis Sonar servicio_usuarios
@@ -75,6 +75,6 @@ jobs:
         run: |
           cd servicio_usuarios
           mvn sonar:sonar \
-            -Dsonar.projectKey=TU_PROJECT_KEY2 \
-            -Dsonar.organization=TU_ORGANIZATION \
+            -Dsonar.projectKey=Heartsmith1_RepoDevops \
+            -Dsonar.organization=Heartsmith1 \
             -Dsonar.host.url=https://sonarcloud.io
