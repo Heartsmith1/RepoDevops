@@ -1,0 +1,5 @@
+com\example\api_cursos\CursoServiceTest.class
+com\example\api_cursos\ContenidoServiceTest.class
+com\example\api_cursos\ApiCursosApplicationTests.class
+com\example\api_cursos\CompraServiceTest.class
+com\example\api_cursos\ReporteServiceTest.class
