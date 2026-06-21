@@ -1,0 +1,80 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [develop]
+
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  pruebas:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # =========================
+      # DESCARGAR CODIGO
+      # =========================
+
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      # =========================
+      # CONFIGURAR JAVA
+      # =========================
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # =========================
+      # API CURSOS
+      # =========================
+
+      - name: Compilar api_cursos
+        run: cd api_cursos && mvn clean install
+
+      - name: Ejecutar tests api_cursos
+        run: cd api_cursos && mvn test
+
+      - name: Construir Docker api_cursos
+        run: cd api_cursos && docker build -t api_cursos .
+
+      # =========================
+      # SERVICIO USUARIOS
+      # =========================
+
+      - name: Compilar servicio_usuarios
+        run: cd servicio_usuarios && mvn clean install
+
+      - name: Ejecutar tests servicio_usuarios
+        run: cd servicio_usuarios && mvn test
+
+      - name: Construir Docker servicio_usuarios
+        run: cd servicio_usuarios && docker build -t servicio_usuarios .
+
+      # =========================
+      # DOCKER COMPOSE
+      # =========================
+
+      - name: Levantar Docker Compose
+        run: docker compose up -d --build
+
+      # =========================
+      # SONARQUBE
+      # =========================
+
+      - name: Analisis Sonar api_cursos
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd api_cursos
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=Heartsmith1_RepoDevops \
+            -Dsonar.organization=heartsmith1 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${SONAR_TOKEN}

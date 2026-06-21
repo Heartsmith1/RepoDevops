@@ -1,23 +1,27 @@
 package com.example.servicio_usuarios;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.servicio_usuarios.models.entities.User;
 import com.example.servicio_usuarios.models.request.UserCrear;
 import com.example.servicio_usuarios.repositories.UserRepository;
 import com.example.servicio_usuarios.services.UserServices;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-    @Autowired
-    private UserServices userServices;
 
-    @Autowired
+    @Mock
     private UserRepository userRepository;
+
+    @InjectMocks
+    private UserServices userServices;
 
     @Test
     void probarHasheoDePasswords(){
@@ -28,24 +32,30 @@ public class UserServiceTest {
 
         Boolean coincide = userServices.comprobarPassword(hash, passAProbar);
 
-        assertEquals(coincide, true);
+        assertEquals(true, coincide);
     }
 
     @Test
     void probarAgregar(){
+
         String correo = "asd@asd.com";
         String nombre = "pruebita";
-        User user = userRepository.findByEmail(correo);
-        if (user != null){
-            userRepository.delete(user);
-        }
+
         UserCrear nuevoUser = new UserCrear();
         nuevoUser.setEmail(correo);
         nuevoUser.setPassword("123456");
         nuevoUser.setName(nombre);
 
+        User userGuardado = new User();
+        userGuardado.setEmail(correo);
+        userGuardado.setName(nombre);
+
+        when(userRepository.save(org.mockito.ArgumentMatchers.any(User.class)))
+                .thenReturn(userGuardado);
+
         User usuarioEnBd = userServices.registrar(nuevoUser);
-        assertEquals(usuarioEnBd.getEmail(), correo);
-        assertEquals(usuarioEnBd.getName(), nombre);
+
+        assertEquals(correo, usuarioEnBd.getEmail());
+        assertEquals(nombre, usuarioEnBd.getName());
     }
 }

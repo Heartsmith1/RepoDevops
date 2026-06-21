@@ -2,13 +2,10 @@ package com.example.api_cursos.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
-
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.api_cursos.models.entities.Compra;
@@ -21,6 +18,7 @@ import com.example.api_cursos.services.CursoService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("compra")
 public class CompraController {
