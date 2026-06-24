@@ -1,0 +1,63 @@
+services:
+  # La aplicación a observar
+  repodevops:
+    build: ..
+    ports:
+      
+"8080:8080"
+  environment:# Expone el endpoint /actuator/prometheus sin tocar código
+MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
+
+  # Recolecta y almacena métricas (modelo pull)
+  prometheus:
+    image: prom/prometheus:v3.9.1
+    ports:
+      
+"9090:9090"
+  volumes:
+./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  # Visualización: dashboards sobre los datos de Prometheus
+  grafana:
+    image: grafana/grafana:12.3.1
+    ports:
+      
+"3000:3000"
+  environment:
+GF_SECURITY_ADMIN_PASSWORD=devops
+volumes:
+./grafana/provisioning:/etc/grafana/provisioning:ro
+
+  # Métricas de CPU/memoria de todos los contenedores del host
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.55.1
+    ports:
+      
+"8081:8080"
+  volumes:
+/:/rootfs:ro
+/var/run:/var/run:ro
+/sys:/sys:ro
+/var/lib/docker/:/var/lib/docker:ro
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # La aplicación: métricas expuestas por Spring Boot Actuator + Micrometer
+  
+job_name: "repodevops"
+  metrics_path: "/actuator/prometheus"
+  static_configs:
+targets: ["repodevops:8080"]
+
+  # cAdvisor: métricas de CPU/memoria de los contenedores
+  
+job_name: "cadvisor"
+  static_configs:
+targets: ["cadvisor:8080"]
+
+  # Prometheus se monitorea a sí mismo
+  
+job_name: "prometheus"
+  static_configs:
+targets: ["localhost:9090"]
