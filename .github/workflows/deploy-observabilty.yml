@@ -140,7 +140,7 @@ jobs:
             if [ ! -d spring-RepoDevops ]; then
               git clone https://github.com/Heartsmith1/RepoDevops.git
             fi
-            cd spring-RepoDevops/observability
+            cd RepoDevops/observability
             git pull
             docker compose up -d --build
 
