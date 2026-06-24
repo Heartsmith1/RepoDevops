@@ -1,0 +1,154 @@
+name: Deploy Observability Stack
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_DEFAULT_REGION: us-east-1
+  INSTANCE_NAME: repodevops-observability
+  INSTANCE_TYPE: t3.small
+  KEY_NAME: vockey
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+    steps:
+      - name: Verificar credenciales AWS
+        run: aws sts get-caller-identity
+                    
+      - name: Asegurar security group
+        id: sg
+        run: |
+          SG_ID=$(aws ec2 describe-security-groups \
+            --filters "Name=group-name,Values=repodevops-observability" \
+            --query 'SecurityGroups[0].GroupId' --output text 2>/dev/null || true)
+
+          if [ -z "$SG_ID" ] || [ "$SG_ID" = "None" ]; then
+            echo "Creando security group..."
+            VPC_ID=$(aws ec2 describe-vpcs \
+              --filters "Name=isDefault,Values=true" \
+              --query 'Vpcs[0].VpcId' --output text)
+            SG_ID=$(aws ec2 create-security-group \
+              --group-name "repodevops-observability" \
+              --description "Stack observabilidad RepoDevops evaluacion" \
+              --vpc-id "$VPC_ID" \
+              --query 'GroupId' --output text)
+            aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
+              --ip-permissions \
+                "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=0.0.0.0/0}]" \
+                "IpProtocol=tcp,FromPort=8080,ToPort=8080,IpRanges=[{CidrIp=0.0.0.0/0}]" \
+                "IpProtocol=tcp,FromPort=3000,ToPort=3000,IpRanges=[{CidrIp=0.0.0.0/0}]" \
+                "IpProtocol=tcp,FromPort=9090,ToPort=9090,IpRanges=[{CidrIp=0.0.0.0/0}]"
+            echo "Security group creado: $SG_ID"
+          else
+            echo "Security group existente: $SG_ID"
+          fi
+          echo "sg_id=$SG_ID" >> $GITHUB_OUTPUT
+
+      - name: Buscar AMI más reciente de Ubuntu 24.04
+        id: ami
+        run: |
+          AMI=$(aws ec2 describe-images \
+            --owners 099720109477 \
+            --filters \
+              "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" \
+              "Name=state,Values=available" \
+            --query 'sort_by(Images,&CreationDate)[-1].ImageId' --output text)
+          echo "ami=$AMI" >> $GITHUB_OUTPUT
+          echo "AMI Ubuntu 24.04: $AMI"
+
+      - name: Buscar o crear instancia EC2
+        id: ec2
+        run: |
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters \
+              "Name=tag:Name,Values=${{ env.INSTANCE_NAME }}" \
+              "Name=instance-state-name,Values=running,stopped" \
+            --query 'Reservations[0].Instances[0].InstanceId' --output text)
+
+          if [ -z "$INSTANCE_ID" ] || [ "$INSTANCE_ID" = "None" ]; then
+            echo "Creando instancia nueva..."
+            INSTANCE_ID=$(aws ec2 run-instances \
+              --image-id ${{ steps.ami.outputs.ami }} \
+              --instance-type ${{ env.INSTANCE_TYPE }} \
+              --key-name ${{ env.KEY_NAME }} \
+              --security-group-ids ${{ steps.sg.outputs.sg_id }} \
+              --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeSize=16,VolumeType=gp3}" \
+              --iam-instance-profile Name=LabInstanceProfile \
+              --tag-specifications \
+                "ResourceType=instance,Tags=[{Key=Name,Value=${{ env.INSTANCE_NAME }}}]" \
+              --query 'Instances[0].InstanceId' --output text)
+            echo "Instancia creada: $INSTANCE_ID"
+          else
+            echo "Instancia existente: $INSTANCE_ID"
+            STATE=$(aws ec2 describe-instances --instance-ids "$INSTANCE_ID" \
+              --query 'Reservations[0].Instances[0].State.Name' --output text)
+            if [ "$STATE" = "stopped" ]; then
+              echo "Iniciando instancia detenida..."
+              aws ec2 start-instances --instance-ids "$INSTANCE_ID"
+            fi
+          fi
+
+          echo "Esperando que la instancia esté running..."
+          aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
+
+          IP=$(aws ec2 describe-instances --instance-ids "$INSTANCE_ID" \
+            --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+          echo "instance_ip=$IP" >> $GITHUB_OUTPUT
+          echo "IP pública: $IP"
+
+      - name: Esperar que SSH esté disponible
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/ec2-key.pem
+          chmod 600 /tmp/ec2-key.pem
+          until ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -o BatchMode=yes \
+                    -i /tmp/ec2-key.pem ubuntu@${{ steps.ec2.outputs.instance_ip }} "exit 0" 2>/dev/null; do
+            echo "  SSH aún no disponible, reintentando..."
+            sleep 5
+          done
+          echo "SSH listo"
+
+      - name: Instalar Docker (solo si no está instalado)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ steps.ec2.outputs.instance_ip }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            if ! command -v docker &> /dev/null; then
+              echo "Instalando Docker..."
+              sudo apt-get update -qq
+              sudo apt-get install -y docker.io docker-compose-v2 git
+              sudo usermod -aG docker ubuntu
+              echo "Docker instalado: $(docker --version)"
+            else
+              echo "Docker ya estaba instalado: $(docker --version)"
+            fi
+
+      - name: Desplegar stack en EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ steps.ec2.outputs.instance_ip }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            if [ ! -d spring-RepoDevops ]; then
+              git clone https://github.com/Heartsmith1/RepoDevops.git
+            fi
+            cd spring-RepoDevops/observability
+            git pull
+            docker compose up -d --build
+
+      - name: Mostrar URLs del stack
+        run: |
+          IP=${{ steps.ec2.outputs.instance_ip }}
+          echo ""
+          echo "Stack desplegado en $IP:"
+          echo "  Aplicación:  http://$IP:8080"
+          echo "  Prometheus:  http://$IP:9090"
+          echo "  Grafana:     http://$IP:3000  (admin / devops)"
