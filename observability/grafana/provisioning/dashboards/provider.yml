@@ -1,8 +1,7 @@
-apiVersion: 1
+﻿apiVersion: 1
 
 providers:
-  
-name: repodevops
-  type: file
-  options:
-    path: /etc/grafana/provisioning/dashboards
+  - name: repodevops
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards
