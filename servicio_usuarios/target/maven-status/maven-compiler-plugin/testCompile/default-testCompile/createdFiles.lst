@@ -1,0 +1,7 @@
+com\example\servicio_usuarios\TicketServiceTest.class
+com\example\servicio_usuarios\JwtServiceTest.class
+<<<<<<< HEAD
+com\example\servicio_usuarios\ServicioUsuariosApplicationTests.class
+=======
+>>>>>>> develop
+com\example\servicio_usuarios\UserServiceTest.class
