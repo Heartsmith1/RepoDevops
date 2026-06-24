@@ -1,41 +1,39 @@
-﻿services:
+﻿version: '3.8'
+
+services:
   # La aplicación a observar
   repodevops:
     build: ..
     ports:
-      
-"8080:8080"
-  environment:# Expone el endpoint /actuator/prometheus sin tocar código
-MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
+      - "8080:8080"
+    environment:
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,prometheus"
 
   # Recolecta y almacena métricas (modelo pull)
   prometheus:
     image: prom/prometheus:v3.9.1
     ports:
-      
-"9090:9090"
-  volumes:
-./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
 
   # Visualización: dashboards sobre los datos de Prometheus
   grafana:
     image: grafana/grafana:12.3.1
     ports:
-      
-"3000:3000"
-  environment:
-GF_SECURITY_ADMIN_PASSWORD=devops
-volumes:
-./grafana/provisioning:/etc/grafana/provisioning:ro
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "devops"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
 
   # Métricas de CPU/memoria de todos los contenedores del host
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.55.1
     ports:
-      
-"8081:8080"
-  volumes:
-/:/rootfs:ro
-/var/run:/var/run:ro
-/sys:/sys:ro
-/var/lib/docker/:/var/lib/docker:ro
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
