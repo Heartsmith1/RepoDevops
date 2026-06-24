@@ -3,11 +3,20 @@
 services:
   # La aplicación a observar
   repodevops:
-    build: ..
+    build:
+      context: ../api_cursos
+      dockerfile: dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8081"
     environment:
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,prometheus"
+
+  servicio_usuarios:
+    build:
+      context: ../servicio_usuarios
+      dockerfile: dockerfile
+    ports:
+      - "8082:8080"
 
   # Recolecta y almacena métricas (modelo pull)
   prometheus:
