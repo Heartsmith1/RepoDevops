@@ -1,19 +1,19 @@
 ﻿services:
 
-  api-cursos:
+  api_cursos:
     build:
       context: ../api_cursos
-    container_name: api-cursos
+    container_name: api_cursos
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
 
-  servicio-usuarios:
+  servicio_usuarios:
     build:
       context: ../servicio_usuarios
-    container_name: servicio-usuarios
+    container_name: servicio_usuarios
     ports:
       - "8082:8080"
     environment:
@@ -42,8 +42,8 @@
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
-      - api-cursos
-      - servicio-usuarios
+      - api_cursos
+      - servicio_usuarios
 
   grafana:
     image: grafana/grafana:12.3.1
