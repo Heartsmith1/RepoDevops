@@ -2,24 +2,21 @@
   scrape_interval: 15s
 
 scrape_configs:
-  # La aplicación: métricas expuestas por Spring Boot Actuator + Micrometer
-  - job_name: "repodevops"
+
+  - job_name: "api_cursos"
     metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ["repodevops:8081"]
+      - targets: ["host.docker.internal:8080"]
 
-  # cAdvisor: métricas de CPU/memoria de los contenedores
+  - job_name: "servicio_usuarios"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["host.docker.internal:8081"]
+
   - job_name: "cadvisor"
     static_configs:
       - targets: ["cadvisor:8080"]
 
-  # Servicio de usuarios: métricas expuestas por Spring Boot Actuator + Micrometer
-  - job_name: "servicio_usuarios"
-    metrics_path: "/actuator/prometheus"
-    static_configs:
-      - targets: ["servicio_usuarios:8080"]
-
-  # Prometheus se monitorea a sí mismo
   - job_name: "prometheus"
     static_configs:
       - targets: ["localhost:9090"]
