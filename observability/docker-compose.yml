@@ -9,8 +9,6 @@
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
-    depends_on:
-      - mysql-db
 
   servicio-usuarios:
     build:
@@ -21,8 +19,6 @@
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
-    depends_on:
-      - mysql-db
 
   mysql-db:
     image: mysql:8.0
