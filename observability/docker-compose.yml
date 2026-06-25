@@ -99,4 +99,4 @@ volumes:
 
 networks:
   backend-network:
-    external: true
+    external: false
