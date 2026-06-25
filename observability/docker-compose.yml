@@ -66,5 +66,20 @@
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
 
+  cloudwatch-agent:
+    image: amazon/cloudwatch-agent:latest
+    container_name: cloudwatch-agent
+    restart: always
+    volumes:
+      - ./cloudwatch-config.json:/opt/aws/amazon-cloudwatch-agent/etc/config.json:ro
+      - ./prometheus_scrape.yml:/opt/aws/amazon-cloudwatch-agent/etc/prometheus_scrape.yml:ro
+    environment:
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    depends_on:
+      - api_cursos
+      - servicio_usuarios
+
 volumes:
   mysql_data:
