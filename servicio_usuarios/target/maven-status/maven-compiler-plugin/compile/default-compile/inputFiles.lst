@@ -1,25 +1,3 @@
-<<<<<<< HEAD
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\assemblers\UserModelAssembler.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\controllers\AunthenticationController.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\controllers\TicketController.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\controllers\UserController.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\controllers\UserControllerV2.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\models\entities\Ticket.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\models\entities\User.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\models\entities\UserRol.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\models\request\LoginRequest.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\models\request\UserCrear.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\models\request\UserUpdate.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\models\responses\LoginResponse.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\repositories\RolRepository.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\repositories\TicketRepository.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\repositories\UserRepository.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\services\JwtService.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\services\TicketService.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\services\UserServices.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\ServicioUsuariosApplication.java
-C:\Users\Heart\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\swagger\OpenApiSecurityConfig.java
-=======
 C:\Users\Allen\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\assemblers\UserModelAssembler.java
 C:\Users\Allen\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\controllers\AunthenticationController.java
 C:\Users\Allen\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\controllers\TicketController.java
@@ -40,4 +18,3 @@ C:\Users\Allen\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\se
 C:\Users\Allen\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\services\UserServices.java
 C:\Users\Allen\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\ServicioUsuariosApplication.java
 C:\Users\Allen\Desktop\RepoDevops\servicio_usuarios\src\main\java\com\example\servicio_usuarios\swagger\OpenApiSecurityConfig.java
->>>>>>> develop

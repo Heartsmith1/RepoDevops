@@ -13,10 +13,10 @@
   #   networks:
   #     - backend-network
 
-  servicio_usuarios:
+  servicio-usuarios:
     build:
       context: ../servicio_usuarios
-    container_name: servicio_usuarios
+    container_name: servicio-usuarios
     restart: on-failure
     ports:
       - "8082:8080"
@@ -62,7 +62,7 @@
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
-      - servicio_usuarios
+      - servicio-usuarios
     networks:
       - backend-network
 
@@ -103,7 +103,7 @@
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     depends_on:
-      - servicio_usuarios
+      - servicio-usuarios
     networks:
       - backend-network
 
