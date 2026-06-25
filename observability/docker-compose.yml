@@ -21,7 +21,8 @@ services:
 
   # 🟢 MICROSERVICIO CURSOS
   api_cursos:
-    build: ./api_cursos
+    build:
+      context: ./api_cursos
     container_name: api_cursos
     ports:
       - "8080:8080"
@@ -37,7 +38,8 @@ services:
 
   # 🟢 MICROSERVICIO USUARIOS
   servicio_usuarios:
-    build: ./servicio_usuarios
+    build:
+      context: ./servicio_usuarios
     container_name: servicio_usuarios
     ports:
       - "8081:8080"

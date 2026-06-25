@@ -3,20 +3,24 @@
 
 scrape_configs:
 
+  # 🔵 PROMETHEUS SELF MONITORING
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["prometheus:9090"]
+
+  # 🟢 MICROSERVICIO CURSOS
   - job_name: "api_cursos"
-    metrics_path: "/actuator/prometheus"
+    metrics_path: /actuator/prometheus
     static_configs:
       - targets: ["api_cursos:8080"]
 
+  # 🟢 MICROSERVICIO USUARIOS
   - job_name: "servicio_usuarios"
-    metrics_path: "/actuator/prometheus"
+    metrics_path: /actuator/prometheus
     static_configs:
       - targets: ["servicio_usuarios:8080"]
 
+  # 🔵 CADVISOR
   - job_name: "cadvisor"
     static_configs:
       - targets: ["cadvisor:8080"]
-
-  - job_name: "prometheus"
-    static_configs:
-      - targets: ["localhost:9090"]
