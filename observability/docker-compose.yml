@@ -1,59 +1,41 @@
-﻿version: '3.8'
+﻿services:
 
-services:
+  api-cursos:
+    build: ./api-cursos
+    container_name: api-cursos
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
+    depends_on:
+      - mysql-db
 
-  # 🟢 BASE DE DATOS
+  servicio-usuarios:
+    build: ./servicio-usuarios
+    container_name: servicio-usuarios
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
+    depends_on:
+      - mysql-db
+
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: app_db
-      MYSQL_USER: app_user
-      MYSQL_PASSWORD: app_password
+      MYSQL_DATABASE: devops_db
+      MYSQL_USER: devops_user
+      MYSQL_PASSWORD: devops_pass
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      - monex-network
 
-  # 🟢 MICROSERVICIO CURSOS
-  api_cursos:
-    build:
-      context: ../api_cursos
-    container_name: api_cursos
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql-db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/app_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: app_user
-      SPRING_DATASOURCE_PASSWORD: app_password
-      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
-    networks:
-      - monex-network
-
-  # 🟢 MICROSERVICIO USUARIOS
-  servicio_usuarios:
-    build:
-      context: ../servicio_usuarios
-    container_name: servicio_usuarios
-    ports:
-      - "8081:8080"
-    depends_on:
-      - mysql-db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/app_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: app_user
-      SPRING_DATASOURCE_PASSWORD: app_password
-      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
-    networks:
-      - monex-network
-
-  # 🔵 PROMETHEUS
   prometheus:
     image: prom/prometheus:v3.9.1
     container_name: prometheus
@@ -61,39 +43,30 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    networks:
-      - monex-network
+    depends_on:
+      - api-cursos
+      - servicio-usuarios
 
-  # 🔵 GRAFANA
   grafana:
     image: grafana/grafana:12.3.1
     container_name: grafana
     ports:
       - "3000:3000"
     environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: devops
-    volumes:
-      - ./grafana/provisioning:/etc/grafana/provisioning:ro
-    networks:
-      - monex-network
+      - GF_SECURITY_ADMIN_PASSWORD=devops
+    depends_on:
+      - prometheus
 
-  # 🔵 CADVISOR
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.55.1
     container_name: cadvisor
     ports:
-      - "8082:8080"
+      - "8083:8080"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    networks:
-      - monex-network
 
 volumes:
   mysql_data:
-
-networks:
-  monex-network:
