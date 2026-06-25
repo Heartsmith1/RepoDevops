@@ -3,12 +3,13 @@
 
 scrape_configs:
 
-  - job_name: 'api-cursos'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['api_cursos:8081']
+  # api_cursos (temporarily disabled for testing)
+  # - job_name: 'api_cursos'
+  #   metrics_path: '/actuator/prometheus'
+  #   static_configs:
+  #     - targets: ['api_cursos:8081']
 
-  - job_name: 'servicio-usuarios'
+  - job_name: 'servicio_usuarios'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['servicio_usuarios:8080']
