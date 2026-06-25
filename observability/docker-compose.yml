@@ -2,7 +2,7 @@
 
   api-cursos:
     build:
-      context: ../api-cursos
+      context: ../api_cursos
     container_name: api-cursos
     ports:
       - "8081:8080"
@@ -12,7 +12,7 @@
 
   servicio-usuarios:
     build:
-      context: ../servicio-usuarios
+      context: ../servicio_usuarios
     container_name: servicio-usuarios
     ports:
       - "8082:8080"
