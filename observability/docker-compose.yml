@@ -23,6 +23,12 @@
     depends_on:
       mysql-db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
