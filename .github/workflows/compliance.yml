@@ -1,0 +1,93 @@
+name: Compliance Checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  sonar:
+    name: SonarCloud analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Analisis Sonar api_cursos
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd api_cursos
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=Heartsmith1_RepoDevops \
+            -Dsonar.organization=heartsmith1 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${SONAR_TOKEN}
+
+      - name: Analisis Sonar servicio_usuarios
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd servicio_usuarios
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=Heartsmith1_RepoDevops \
+            -Dsonar.organization=heartsmith1 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${SONAR_TOKEN}
+
+  audit:
+    name: Compliance audit
+    needs: sonar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ejecutar auditoría de cumplimiento
+        run: bash ./scripts/audit-compliance.sh
+
+  branch-protection:
+    name: Branch protection policy check
+    needs: [sonar, audit]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const branches = ["main", "develop"];
+            const org = context.repo.owner;
+            const repo = context.repo.repo;
+            const missing = [];
+            for (const branch of branches) {
+              try {
+                const protection = await github.rest.repos.getBranchProtection({
+                  owner: org,
+                  repo,
+                  branch,
+                });
+                const checks = protection.data.required_status_checks;
+                const reviews = protection.data.required_pull_request_reviews;
+                if (!checks || !checks.strict || !Array.isArray(checks.contexts) || checks.contexts.length === 0) {
+                  missing.push(`${branch} must require strict status checks and defined contexts`);
+                }
+                if (!reviews) {
+                  missing.push(`${branch} must require pull request reviews`);
+                }
+              } catch (error) {
+                missing.push(`${branch} protection not configured: ${error.message}`);
+              }
+            }
+            if (missing.length > 0) {
+              throw new Error(`Branch protection policy failed:\n- ${missing.join("\n- ")}`);
+            }
