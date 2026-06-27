@@ -86,6 +86,11 @@ Aplicamos estas medidas automatizadas y de proceso para mantener calidad:
 - Aplicamos políticas de protección de ramas y revisiones de código obligatorias.
 - Recomendamos integrar SCA (Dependabot, OWASP Dependency-Check u otras) para escaneo de dependencias.
 
+### Bloqueo automático del pipeline ante fallos críticos
+
+Los workflows de CI y compliance ejecutan SonarCloud con `-Dsonar.qualitygate.wait=true`.
+Si SonarCloud devuelve un Quality Gate en fallo por vulnerabilidades, seguridad o problemas de calidad críticos, el paso termina con error y GitHub Actions detiene el workflow antes de seguir con etapas posteriores o de permitir el merge.
+
 ## Observabilidad y monitoreo
 
 El repositorio incluye una configuración de monitorización basada en Prometheus, Grafana y CloudWatch:
