@@ -1,0 +1,19 @@
+﻿global:
+  scrape_interval: 5s
+
+scrape_configs:
+
+  # api_cursos (temporarily disabled for testing)
+  # - job_name: 'api_cursos'
+  #   metrics_path: '/actuator/prometheus'
+  #   static_configs:
+  #     - targets: ['api_cursos:8081']
+
+  - job_name: 'servicio_usuarios'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['servicio-usuarios:8080']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
