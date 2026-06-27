@@ -105,7 +105,6 @@ El workflow crea o reutiliza una instancia EC2, instala Docker y Docker Compose,
 
 Las URLs resultantes son:
 
-- Aplicación: `http://<IP>:8082`
 - Prometheus: `http://<IP>:9090`
 - Grafana: `http://<IP>:3000`
 

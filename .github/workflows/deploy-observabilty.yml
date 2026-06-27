@@ -149,6 +149,5 @@ jobs:
           IP=${{ steps.ec2.outputs.instance_ip }}
           echo ""
           echo "Stack desplegado en $IP:"
-          echo "  Aplicación:  http://$IP:8080"
           echo "  Prometheus:  http://$IP:9090"
           echo "  Grafana:     http://$IP:3000  (admin / devops)"
