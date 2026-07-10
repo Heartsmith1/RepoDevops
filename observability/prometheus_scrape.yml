@@ -1,0 +1,10 @@
+scrape_configs:
+  - job_name: 'api_cursos'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['api_cursos:8081']
+
+  - job_name: 'servicio_usuarios'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['servicio-usuarios:8080']

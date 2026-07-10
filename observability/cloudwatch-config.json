@@ -1,0 +1,13 @@
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "root"
+  },
+  "metrics": {
+    "metrics_collected": {
+      "prometheus": {
+        "prometheus_config_path": "/opt/aws/amazon-cloudwatch-agent/etc/prometheus_scrape.yml"
+      }
+    }
+  }
+}
