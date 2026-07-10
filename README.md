@@ -171,7 +171,7 @@ Desde la raíz del repositorio, con Docker y Docker Compose instalados:
 docker-compose up --build
 ```
 
-## Ejecutar / construir individualmente
+## Ejecutar  / construir individualmente
 
 Windows (PowerShell):
 
